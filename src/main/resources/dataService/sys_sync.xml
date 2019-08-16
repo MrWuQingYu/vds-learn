@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services>
+    <service data="com.wuqy.vdslearn.entity.SysSync"
+             type="jdbc">
+        <create>
+            insert into sys_sync(syncType,start,end,total,syncStartTime,syncEndTime,operateTime)
+            values(#{syncType},#{start},#{end},#{total},#{syncStartTime},#{syncEndTime},#{operateTime})
+        </create>
+
+        <query name="querySysSync">
+            select id,syncType,start,end,total,syncStartTime,syncEndTime,operateTime
+            from sys_sync
+            where syncType = #{filter.syncType}
+        </query>
+
+        <query name="queryList">
+            select id,syncType,start,end,total,syncStartTime,syncEndTime,operateTime
+            from sys_sync
+        </query>
+
+        <update>
+            update sys_sync
+            <trim prefix="set" suffixOverrides=",">
+                <if test="start != null">
+                    start=#{start},
+                </if>
+                <if test="total != null">
+                    total=#{total},
+                </if>
+                <if test="syncStartTime != null">
+                    syncStartTime=#{syncStartTime},
+                </if>
+                <if test="syncEndTime != null">
+                    syncEndTime=#{syncEndTime},
+                </if>
+                <if test="operateTime != null">
+                    operateTime=#{operateTime},
+                </if>
+            </trim>
+            where id=#{id}
+        </update>
+
+        <pbatch>
+            insert into sys_sync(syncType,start,end,total,syncStartTime,syncEndTime,operateTime)
+            values
+            <foreach collection="list" index="index" separator=",">
+                (#{syncType},#{start},#{end},#{total},#{syncStartTime},#{syncEndTime},#{operateTime})
+            </foreach>
+        </pbatch>
+
+        <delete>
+            delete from sys_sync where id = #{id}
+        </delete>
+
+        <update name = "logicDelete">
+            update sys_sync set start=9999 where id = #{filter.id}
+        </update>
+
+    </service>
+</services>
